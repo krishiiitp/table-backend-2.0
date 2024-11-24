@@ -28,4 +28,23 @@ router.post('/ngo-registration', (req, res) => {
   );
 });
 
+router.get('/ngo-registration/:workId', (req, res) => {
+  const { workId } = req.params;
+
+  const query = `
+    SELECT * FROM NGORegistration WHERE WorkID = ?
+  `;
+
+  db.query(query, [workId], (err, results) => {
+    if (err) {
+      console.error('Error fetching NGOs by WorkID:', err.message);
+      return res.status(500).json({ message: 'Error fetching NGOs', error: err.message });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No NGOs found for the given WorkID' });
+    }
+    res.status(200).json({ message: 'NGOs fetched successfully', data: results });
+  });
+});
+
 module.exports = router;
